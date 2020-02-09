@@ -1,0 +1,72 @@
+{
+  "name": "botkit-translate-us",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "unit-test": "nyc -s jest --detectOpenHandles --forceExit --verbose --coverage test/unit/",
+    "e2e-test": "nyc --clean -t=.e2eTestCoverage mocha test/e2e -c true --recursive --exit",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "coverage-report": "nyc report -t=.nycJSON -r=html",
+    "cy:run": "cypress run",
+    "cy:install": "cypress install",
+    "cy:verify": "cypress verify",
+    "cy:run-record": "cypress run --record --key a29c46fc-fe62-49a7-99d1-7653252dfac9 --spec 'cypress/integration/test.js'"
+  },
+  "jest": {
+    "testMatch": [
+      "**/test/unit/**/*.test.js"
+    ],
+    "coverageReporters": [
+      "json"
+    ],
+    "coverageDirectory": ".unitTestCoverage"
+  },
+  "nyc": {
+    "reporter": [
+      "html",
+      "text-summary"
+    ]
+  },
+  "dependencies": {
+    "@slack/events-api": "^2.3.0",
+    "@slack/web-api": "^5.4.0",
+    "axios": "^0.19.0",
+    "botbuilder-adapter-slack": "^1.0.5",
+    "botbuilder-storage-mongodb": "^0.9.5",
+    "botkit": "^4.5.0",
+    "botkit-plugin-cms": "^1.0.2",
+    "dotenv": "^7.0.0",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-cypress": "^2.7.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^23.0.2",
+    "eslint-plugin-jsdoc": "^15.12.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-mocha": "^6.2.0",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "jest": "^24.9.0",
+    "jsdoc": "^3.6.3",
+    "mongodb": "^3.3.3",
+    "nodemon": "^1.19.4",
+    "request": "^2.88.0",
+    "restify": "^8.4.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.21",
+    "botkit-mock": "^4.0.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "istanbul-lib-coverage": "^2.0.5",
+    "jest-chain": "^1.1.2",
+    "jest-extended": "^0.11.2",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1"
+  }
+}

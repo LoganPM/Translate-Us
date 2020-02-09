@@ -1,0 +1,39 @@
+plugins: [mocha, jsdoc, jest]
+
+extends:
+ - airbnb-base
+ - plugin:jsdoc/recommended
+
+env:
+  node: true
+  es2017: true
+  mocha: true
+  mongo: true
+  jest: true
+
+rules:
+  prefer-destructuring: off
+  no-console: off
+  no-underscore-dangle: off
+  no-plusplus: off
+  no-useless-escape: warn
+  consistent-return: warn
+  no-unused-vars: warn
+  max-len: warn
+  no-undef: warn
+  no-use-before-define: warn
+  no-multi-assign: warn
+  import/no-unresolved: off
+  no-param-reassign: off
+  no-trailing-spaces: off
+  camelcase: off
+  jest/no-disabled-tests: warn
+  jest/no-focused-tests: error
+  jest/no-identical-title: error
+  jest/prefer-to-have-length: warn
+  jest/valid-expect: warn
+  jsdoc/require-param-description: off
+  jsdoc/require-param-type: off
+  jsdoc/require-returns-description: off
+  jsdoc/require-returns-type: off
+  jsdoc/require-returns: off

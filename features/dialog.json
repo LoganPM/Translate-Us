@@ -1,0 +1,238 @@
+{
+    "callback_id": "botrisDialog",
+    "title": "Let's Translate-Us!",
+    "elements": [
+        {
+            "label":"Translate From",
+            "type": "select",
+            "name": "fromLang",
+            "value": "auto",
+            "options": [
+                {
+                    "label": "Automatic Detection",
+                    "value": "auto"
+                },
+                {
+                    "label": "English",
+                    "value": "en"
+                },
+                {
+                    "label": "Arabic",
+                    "value": "ar"
+                },
+                {
+                    "label": "Bulgarian",
+                    "value": "bg"
+                },
+                {
+                    "label": "Chinese",
+                    "value": "zh-chs"
+                },
+                {
+                    "label": "Dutch",
+                    "value": "nl"
+                },
+                {
+                    "label": "Finnish",
+                    "value": "fi"
+                },
+                {
+                    "label": "French",
+                    "value": "fr"
+                },
+                {
+                    "label": "German",
+                    "value": "de"
+                },
+                {
+                    "label": "Greek",
+                    "value": "el"
+                },
+                {
+                    "label": "Hebrew",
+                    "value": "he"
+                },
+                {
+                    "label": "Hindi",
+                    "value": "hi"
+                },
+                {
+                    "label": "Indonesian",
+                    "value": "id"
+                },
+                {
+                    "label": "Italian",
+                    "value": "it"
+                },
+                {
+                    "label": "Japanese",
+                    "value": "ja"
+                },
+                {
+                    "label": "Klingon",
+                    "value": "tlh"
+                },
+                {
+                    "label": "Korean",
+                    "value": "ko"
+                },
+                {
+                    "label": "Norwegian",
+                    "value": "no"
+                },
+                {
+                    "label": "Polish",
+                    "value": "pl"
+                },
+                {
+                    "label": "Portuguese",
+                    "value": "pt"
+                },
+                {
+                    "label": "Russian",
+                    "value": "ru"
+                },
+                {
+                    "label": "Spanish",
+                    "value": "es"
+                },
+                {
+                    "label": "Swedish",
+                    "value": "sv"
+                },
+                {
+                    "label": "Turkish",
+                    "value": "tr"
+                },
+                {
+                    "label": "Ukrainian",
+                    "value": "uk"
+                },
+                {
+                    "label": "Urdu",
+                    "value": "ur"
+                },
+                {
+                    "label": "Vietnamese",
+                    "value": "vi"
+                }
+            ]
+        },
+        {
+            "label":"Translate To",
+            "type": "select",
+            "name": "toLang",
+            "options": [
+                {
+                    "label": "English",
+                    "value": "en"
+                },
+                {
+                    "label": "Arabic",
+                    "value": "ar"
+                },
+                {
+                    "label": "Bulgarian",
+                    "value": "bg"
+                },
+                {
+                    "label": "Chinese",
+                    "value": "zh-chs"
+                },
+                {
+                    "label": "Dutch",
+                    "value": "nl"
+                },
+                {
+                    "label": "Finnish",
+                    "value": "fi"
+                },
+                {
+                    "label": "French",
+                    "value": "fr"
+                },
+                {
+                    "label": "German",
+                    "value": "de"
+                },
+                {
+                    "label": "Greek",
+                    "value": "el"
+                },
+                {
+                    "label": "Hebrew",
+                    "value": "he"
+                },
+                {
+                    "label": "Hindi",
+                    "value": "hi"
+                },
+                {
+                    "label": "Indonesian",
+                    "value": "id"
+                },
+                {
+                    "label": "Italian",
+                    "value": "it"
+                },
+                {
+                    "label": "Japanese",
+                    "value": "ja"
+                },
+                {
+                    "label": "Klingon",
+                    "value": "tlh"
+                },
+                {
+                    "label": "Korean",
+                    "value": "ko"
+                },
+                {
+                    "label": "Norwegian",
+                    "value": "no"
+                },
+                {
+                    "label": "Polish",
+                    "value": "pl"
+                },
+                {
+                    "label": "Portuguese",
+                    "value": "pt"
+                },
+                {
+                    "label": "Russian",
+                    "value": "ru"
+                },
+                {
+                    "label": "Spanish",
+                    "value": "es"
+                },
+                {
+                    "label": "Swedish",
+                    "value": "sv"
+                },
+                {
+                    "label": "Turkish",
+                    "value": "tr"
+                },
+                {
+                    "label": "Ukrainian",
+                    "value": "uk"
+                },
+                {
+                    "label": "Urdu",
+                    "value": "ur"
+                },
+                {
+                    "label": "Vietnamese",
+                    "value": "vi"
+                }
+            ]
+        },
+        {
+            "label": "Text to Translate",
+            "type": "textarea",
+            "name": "textToTranslate"
+        }
+    ]
+}

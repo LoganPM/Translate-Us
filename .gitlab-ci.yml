@@ -1,0 +1,197 @@
+# Docker container that will provide the runtime for pipeline
+image: node:10-buster
+
+# Identify Stages
+stages:
+  - test
+  - clean
+  - deploy
+
+# We don't want to download our node_modules between each
+# stage of the pipeline, so we will cache our dependencies
+# based on the commit hash that is being tested.
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+# Names of tasks and coresponding stage
+lint:
+  stage: test
+  script:
+    - npm install
+    - npm run lint
+  only:
+    - branches
+    - merge_requests
+
+e2e-cypress-test:
+  stage: test
+  environment: Staging
+  only:
+    - Testing
+    - merge_requests
+  script:
+    - mkdir cypress_results;
+    - cat $ENV_VARS_AUTOMATED >> .env
+    - ls -la
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - sshpass -e ssh -o stricthostkeychecking=no sysadmin@131.104.49.127 'rm -rf /home/sysadmin/translate-us-test4/translate-us/;'
+    - sshpass -e scp -r $(pwd) sysadmin@131.104.49.127:/home/sysadmin/translate-us-test4
+    - sshpass -e ssh sysadmin@131.104.49.127 'rm -rf /home/sysadmin/translate-us-test4/translate-us/node_modules/ && cp -r /home/sysadmin/translate-us-test4/translate-us/* /home/sysadmin/translate-us-test4/translate-us/.env /home/sysadmin/translate-us-test4/ && rm -rf /home/sysadmin/translate-us-test4/translate-us/ && cd /home/sysadmin/translate-us-test4/ && npm install cypress; npm install && npm run cy:run-record'
+    - sshpass -e scp -r sysadmin@131.104.49.127:/home/sysadmin/translate-us-test4/cypress/videos/ $(pwd)/cypress_results/
+    - sshpass -e scp -r sysadmin@131.104.49.127:/home/sysadmin/translate-us-test4/cypress/screenshots/ $(pwd)/cypress_results/
+  artifacts:
+    when: always
+    paths:
+      - cypress_results/*
+    expire_in: 4 days
+
+unit-test:
+  stage: test
+  environment: Staging
+  only:
+    - Testing
+    - merge_requests
+  script:
+    - npm install
+    - cat $ENV_VARS_STAGE >> .env
+    - rm -f .unitTestCoverage/*.json
+    - npm run unit-test  
+    - rm -f .env
+    - rm ./package-lock.json
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - cd .unitTestCoverage
+    - sed 's+/modules/+/Staging-UnitTests/+' *.json > StagingUnitTests.json
+    - sshpass -e ssh -o stricthostkeychecking=no sysadmin@131.104.49.127 'shopt -s dotglob && mkdir -p /home/sysadmin/.nycJSON &&  rm -f /home/sysadmin/.nycJSON/StagingUnitTests.json'
+    - sshpass -e scp StagingUnitTests.json sysadmin@131.104.49.127:/home/sysadmin/.nycJSON/StagingUnitTests.json
+
+e2e-test:
+  stage: test
+  environment: Staging
+  only:
+    - Testing
+    - merge_requests
+  script:
+    - npm install
+    - cat $ENV_VARS_STAGE >> .env
+    - npm run e2e-test
+    - rm -f .env
+    - rm ./package-lock.json
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - cd .e2eTestCoverage
+    - sed 's+/features/+/Staging-E2eTests/+' *.json > StagingE2eTests.json
+    - sshpass -e ssh -o stricthostkeychecking=no sysadmin@131.104.49.127 'shopt -s dotglob && mkdir -p /home/sysadmin/.nycJSON && rm -f /home/sysadmin/.nycJSON/StagingE2eTests.json'
+    - sshpass -e scp StagingE2eTests.json sysadmin@131.104.49.127:/home/sysadmin/.nycJSON/StagingE2eTests.json
+
+unit-test-prod:
+  stage: test
+  environment: Production
+  only:
+    - master
+  script:
+    - npm install
+    - cat $ENV_VARS_PROD >> .env
+    - rm -f .unitTestCoverage/*.json
+    - npm run unit-test
+    - rm -f .env
+    - rm ./package-lock.json
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - cd .unitTestCoverage
+    - sed 's+/modules/+/Production-UnitTests/+' *.json > ProductionUnitTests.json
+    - sshpass -e ssh -o stricthostkeychecking=no sysadmin@131.104.49.127 'shopt -s dotglob && mkdir -p /home/sysadmin/.nycJSON && rm -f /home/sysadmin/.nycJSON/ProductionUnitTests.json'
+    - sshpass -e scp ProductionUnitTests.json sysadmin@131.104.49.127:/home/sysadmin/.nycJSON/ProductionUnitTests.json
+
+e2e-test-prod:
+  stage: test
+  environment: Production
+  only:
+    - master
+  script:
+    - npm install
+    - cat $ENV_VARS_PROD >> .env
+    - npm run e2e-test
+    - rm -f .env
+    - rm ./package-lock.json
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - cd .e2eTestCoverage
+    - sed 's+/features/+/Production-E2eTests/+' *.json > ProductionE2eTests.json
+    - sshpass -e ssh -o stricthostkeychecking=no sysadmin@131.104.49.127 'shopt -s dotglob && mkdir -p /home/sysadmin/.nycJSON && rm -f /home/sysadmin/.nycJSON/ProductionE2eTests.json'
+    - sshpass -e scp ProductionE2eTests.json sysadmin@131.104.49.127:/home/sysadmin/.nycJSON/ProductionE2eTests.json
+
+deploy_stage:
+  stage: deploy
+  environment: Staging
+  only:
+    - Testing
+  script:
+    - rm ./package-lock.json
+    - rm -f .env
+    - rm -rf .git/
+    - cat $ENV_VARS_STAGE >> .env
+    - ls
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - sshpass -e scp -o stricthostkeychecking=no -r $(pwd) sysadmin@131.104.49.127:/home/sysadmin/translate-us-test
+    - sshpass -e ssh sysadmin@131.104.49.127 'shopt -s dotglob && cp -r /home/sysadmin/translate-us-test/translate-us/* /home/sysadmin/translate-us-test/ && rm -rf /home/sysadmin/translate-us-test/translate-us/'
+
+deploy_prod:
+  stage: deploy
+  environment: Production
+  only:
+    - master
+  script:
+    - rm ./package-lock.json
+    - rm -f .env
+    - rm -rf .git/
+    - cat $ENV_VARS_PROD >> .env
+    - ls
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - sshpass -e scp -o stricthostkeychecking=no -r $(pwd) sysadmin@131.104.49.127:/home/sysadmin/translate-us
+    - sshpass -e ssh sysadmin@131.104.49.127 'shopt -s dotglob && cp -r /home/sysadmin/translate-us/translate-us/* /home/sysadmin/translate-us/ && rm -rf /home/sysadmin/translate-us/translate-us/'
+
+deploy_coverage_results:
+  stage: deploy
+  only:
+    - master
+    - Testing
+  script:
+    - npm install
+    - apt-get update -qq && apt-get install -y -qq sshpass
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - mkdir -p .nycJSON
+    - sshpass -e scp -o stricthostkeychecking=no sysadmin@131.104.49.127:/home/sysadmin/.nycJSON/* $(pwd)/.nycJSON/
+    - ls -la .nycJSON
+    - npm run coverage-report
+    - cd coverage
+    - sshpass -e scp -o stricthostkeychecking=no -r $(pwd) sysadmin@131.104.49.127:/home/sysadmin/
+    - sshpass -e ssh sysadmin@131.104.49.127 "shopt -s dotglob && cp -rf /home/sysadmin/coverage/* /home/sysadmin/coverageLive/ && rm -rf /home/sysadmin/coverage && screen -XS coverage quit; screen -d -m -S coverage bash -c 'cd coverageLive/; pushd index.html; python3 -m http.server 9999; popd'"
+
+clean_testing_branch:
+  image: ilyasemenov/gitlab-ci-git-push
+  stage: clean
+  environment: Production
+  only:
+    - master
+  script:
+    - git config --global user.email "git-botris@socs.uoguelph.ca"
+    - git config --global user.name "Gitlab Runner"
+    - git fetch origin
+    - git checkout Testing
+    - git merge origin/Testing
+    - git merge --allow-unrelated-histories -X theirs origin/master #merge master into Testing taking all changes from master and overwriting
+    - git-push git@gitlab.socs.uoguelph.ca:botris/translate-us Testing
